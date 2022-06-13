@@ -32,27 +32,27 @@ async function fetchAndUpdateFollowStatus(entry, from) {
 
 async function listFollowers(address, firstN, after) {
   let postBody = {
-    "query": "query GetIdentity($address: String!, $first: Int, $after: String) {\n  identity(address: $address) {\n    address\n    ens\n     social {\n      twitter\n      __typename\n    }\n    followerCount(namespace: \"\")\n    followingCount(namespace: \"\")\n followers(first: $first, after: $after, namespace: \"\") {\n      pageInfo {\n        ...PageInfo\n        __typename\n      }\n      list {\n        ...Connect\n        __typename\n      }\n      __typename\n    }\n  __typename\n  }\n}\n\nfragment PageInfo on PageInfo {\n  startCursor\n  endCursor\n  hasNextPage\n  hasPreviousPage\n  __typename\n}\n\nfragment Connect on Connect {\n  address\n  ens\n  alias\n  namespace\n  __typename\n}\n",
+    "query": "query GetIdentity($address: String!, $network: Network, $first: Int, $after: String) {\n  identity(address: $address, network: $network) {\n    address\n    ens\n     social {\n      twitter\n      __typename\n    }\n    followerCount()\n    followingCount()\n    followings(first: $first, after: $after) {\n      pageInfo {\n        ...PageInfo\n        __typename\n      }\n      list {\n        ...Connect\n        __typename\n      }\n      __typename\n    }\n    followers(first: $first, after: $after) {\n      pageInfo {\n        ...PageInfo\n        __typename\n      }\n      list {\n        ...Connect\n        __typename\n      }\n      __typename\n    }\n    friends(first: $first, after: $after, namespace: \"\") {\n      pageInfo {\n        ...PageInfo\n        __typename\n      }\n      list {\n        ...Connect\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PageInfo on PageInfo {\n  startCursor\n  endCursor\n  hasNextPage\n  hasPreviousPage\n  __typename\n}\n\nfragment Connect on Connect {\n  address\n  ens\n  alias\n  namespace\n  __typename\n}\n",
     "variables": {
         "address": address,
+        "network": "ETH",
         "first": firstN,
         "after": after
     }
   }
-  
-    const requestOptions = {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36',
-        // 'Refer': 'https://galaxy.eco/',
-        'Origin': 'https://galaxy.eco'
-      }),
-      body: JSON.stringify(postBody)
-    };
+  const requestOptions = {
+    method: 'POST',
+    headers: new Headers({
+      'Content-Type': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36',
+      // 'Refer': 'https://galaxy.eco/',
+      'Origin': 'https://galaxy.eco'
+    }),
+    body: JSON.stringify(postBody)
+  };
 
-    let res = await fetch(cyberApiUrl, requestOptions);
-    return await res.json();
+  let res = await fetch(cyberApiUrl, requestOptions);
+  return await res.json();
 }
 
 async function listFollowings(address, firstN, after) {
